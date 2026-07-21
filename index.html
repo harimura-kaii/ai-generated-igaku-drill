@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>医学の基礎問ドリル（AI生成・非公式デモ）｜苦手分野を割り出す問題バンク</title>
+  <meta name="description" content="【AI生成・非公式デモ】問題と解説はAIが作成しており誤りを含みます。医療判断には使用しないでください。解いた結果からリーフ単位で苦手分野を割り出す個人制作の学習アプリです。" />
+  <link rel="icon" href="assets/favicon.svg" />
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap">
+      <div class="navhist">
+        <button class="histbtn" id="nav-back" title="戻る" aria-label="戻る">‹</button>
+        <button class="histbtn" id="nav-forward" title="進む" aria-label="進む">›</button>
+      </div>
+      <div class="brand" id="brand">
+        <svg class="brandmark" viewBox="0 0 250 40" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="医学の基礎問ドリル">
+          <g transform="translate(2 4) scale(0.8)">
+            <rect x="1.5" y="1.5" width="37" height="37" rx="11" fill="#2563eb"/>
+            <path d="M12 18.5 L18 24.5 L30 12" fill="none" stroke="#fff" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="10" y="29" width="20" height="3" rx="1.5" fill="#fff" opacity="0.92"/>
+          </g>
+          <text x="46" y="20" font-family="'Hiragino Kaku Gothic ProN','Yu Gothic','YuGothic','Meiryo','Noto Sans JP',sans-serif" font-size="22" font-weight="700" letter-spacing="0.5" fill="currentColor" dominant-baseline="central">
+            <tspan>医学</tspan><tspan font-size="14" fill-opacity="0.45">の</tspan><tspan font-size="22">基礎問ドリル</tspan>
+          </text>
+        </svg>
+      </div>
+      <div class="spacer"></div>
+      <button class="linkbtn" id="nav-home">科目選択</button>
+      <button class="linkbtn" id="nav-stats">苦手分野</button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div id="app"></div>
+  </main>
+
+  <footer class="site">
+    <strong>問題・解説はAIが生成しており、誤りが含まれます。医療上の判断には絶対に使用しないでください。</strong><br />
+    個人が学習用に作成した非公式のデモ版です。成績はこの端末のブラウザ内（localStorage）にのみ保存されます。
+  </footer>
+
+  <!-- 入場ゲート(注意喚起モーダル): 他スクリプトより先に読み込み、最初に表示させる -->
+  <script src="assets/entry-gate.js"></script>
+  <!-- レジストリ → 単元データ(実問題→空骨組み) → アプリ本体 の順で読み込む -->
+  <script src="data/systems.js"></script>
+  <script src="data/nervous-system.js"></script>
+  <script src="data/anatomy-structure.js"></script>
+  <!-- 単元を追加する場合: data/ にファイルを置き、ここに1行追加 -->
+  <!-- 悪問報告の送信先設定(任意・無くても動作する) -->
+  <script src="report-config.js"></script>
+  <!-- 進捗復元コード(ふっかつのじゅもん型): app.jsより先に読み込む -->
+  <script src="assets/revival-code.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>
