@@ -744,8 +744,14 @@
     "③設問文が不明瞭",
     "④解説が不適切(該当箇所で対象を指定)",
     "⑤日本語用語が不適切",
-    "⑥既存の問題集・過去問と酷似している(版権の懸念)"
+    "⑥既存の問題集・過去問と酷似している(版権の懸念)",
+    "⑦難易度が不適切(難しすぎる)",
+    "⑧難易度が不適切(簡単すぎる)",
+    "⑨知識がなくても正解できてしまう(選択肢の長さ・言い回しなど)"
   ];
+  // ⑥をチェックした時だけ「似ている出典」欄を出すための目印。
+  // 配列末尾の位置で判定すると分類を追加するたびに壊れるため、文字列の先頭記号で同定する。
+  var REPORT_CAT_COPYRIGHT_PREFIX = "⑥";
   var REPORT_TARGETS = ["設問文", "解説全体", "A", "B", "C", "D", "E"];
 
   // ---------- 報告の送信(任意: report-config.js で window.REPORT_CHANNEL を設定した場合のみ) ----------
@@ -838,10 +844,16 @@
     sourceInput.placeholder = "例: ○○問題集 2023年版 第12問";
     sourceWrap.appendChild(sourceInput);
     body.appendChild(sourceWrap);
-    var copyrightCb = checks[checks.length - 1].cb; // REPORT_CATSの末尾=⑥酷似・版権
-    copyrightCb.onchange = function () {
-      sourceWrap.classList.toggle("hidden", !copyrightCb.checked);
-    };
+    // ⑥(酷似・版権)のチェックボックスを先頭記号で特定する(末尾位置に依存しない)
+    var copyrightEntry = null;
+    for (var ci = 0; ci < checks.length; ci++) {
+      if (checks[ci].label.indexOf(REPORT_CAT_COPYRIGHT_PREFIX) === 0) { copyrightEntry = checks[ci]; break; }
+    }
+    if (copyrightEntry) {
+      copyrightEntry.cb.onchange = function () {
+        sourceWrap.classList.toggle("hidden", !copyrightEntry.cb.checked);
+      };
+    }
 
     var ta = el("textarea", "rnote"); ta.placeholder = "自由記述(任意): 具体的な問題点をご記入ください。";
     body.appendChild(ta);
