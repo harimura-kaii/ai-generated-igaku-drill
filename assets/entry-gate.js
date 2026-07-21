@@ -25,9 +25,9 @@
     {
       title: "タイトル表示",
       kind: "title",
-      body: "医学の基礎問ドリル",
+      body: "医学の基礎問ドリル", // ロゴが読めない環境向けのaria-label兼フォールバック
       sub: "デモ版",
-      cta: "確認した"
+      cta: "はじめに"
     },
     {
       title: "これは何か",
@@ -109,11 +109,28 @@
       stage.appendChild(dots);
 
       if (p.kind === "title") {
-        // タイトルページ: サイト名を大きく、その下に小さく副題(デモ版)を添える。
-        var t = document.createElement("div");
-        t.className = "entrygate-sitetitle";
-        t.textContent = p.body;
-        stage.appendChild(t);
+        // タイトルページ: ロゴ(シンボル+ワードマーク)を大きく出し、下に副題(デモ版)を添える。
+        // SVGはindex.htmlのヘッダーロゴと同じ意匠(青タイル+チェック+土台バー / 助詞「の」を小さく半透明)。
+        var logo = document.createElement("div");
+        logo.className = "entrygate-logo";
+        logo.setAttribute("role", "img");
+        logo.setAttribute("aria-label", p.body);
+        logo.innerHTML =
+          '<svg viewBox="0 0 250 46" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+            '<g transform="translate(0 3) scale(1)">' +
+              '<rect x="1.5" y="1.5" width="37" height="37" rx="11" fill="#2563eb"/>' +
+              '<path d="M12 18.5 L18 24.5 L30 12" fill="none" stroke="#fff" stroke-width="4.2" ' +
+                'stroke-linecap="round" stroke-linejoin="round"/>' +
+              '<rect x="10" y="29" width="20" height="3" rx="1.5" fill="#fff" opacity="0.92"/>' +
+            '</g>' +
+            '<text x="50" y="23" font-family="\'Hiragino Kaku Gothic ProN\',\'Yu Gothic\',\'YuGothic\',' +
+              '\'Meiryo\',\'Noto Sans JP\',sans-serif" font-size="26" font-weight="700" ' +
+              'letter-spacing="0.5" fill="currentColor" dominant-baseline="central">' +
+              '<tspan>医学</tspan><tspan font-size="17" fill-opacity="0.45">の</tspan>' +
+              '<tspan font-size="26">基礎問ドリル</tspan>' +
+            '</text>' +
+          '</svg>';
+        stage.appendChild(logo);
         if (p.sub) {
           var s = document.createElement("div");
           s.className = "entrygate-sitesub";

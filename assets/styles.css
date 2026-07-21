@@ -295,32 +295,39 @@ body.entrygate-lock { overflow: hidden; }
 .entrygate-stage {
   position: absolute; inset: 0;
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px;
-  max-width: 640px; width: 100%; margin: 0 auto;
+  max-width: 720px; width: 100%; margin: 0 auto;
   padding: 32px 28px 110px; /* 右下固定ボタンと重ならないよう下部に余白 */
   text-align: center;
   box-sizing: border-box;
+  overflow-y: auto; /* 文字を大きくしたぶん、狭い画面でも本文が切れないようにする */
 }
 .entrygate-dots { display: flex; gap: 9px; }
 .entrygate-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); transition: background .2s; }
 .entrygate-dot.active { background: var(--primary); }
 .entrygate-text {
-  margin: 0; font-size: 1.28rem; line-height: 2; color: var(--text); white-space: pre-wrap;
+  margin: 0; font-size: 1.55rem; line-height: 1.95; color: var(--text); white-space: pre-wrap;
   font-weight: 400;
 }
-/* タイトルページ(入場ゲート1枚目): サイト名を大きく、副題は小さく添える */
-.entrygate-sitetitle {
-  font-size: 2.4rem; font-weight: 800; color: var(--text); letter-spacing: .02em;
-  line-height: 1.35;
+/* タイトルページ(入場ゲート1枚目): ロゴを大きく、副題を下に添える */
+.entrygate-logo {
+  width: 100%; max-width: 460px; color: var(--text);
 }
+.entrygate-logo svg { width: 100%; height: auto; display: block; }
 .entrygate-sitesub {
-  margin-top: 10px; font-size: 1rem; font-weight: 400; color: var(--muted); letter-spacing: .08em;
-}
-@media (max-width: 480px) {
-  .entrygate-sitetitle { font-size: 1.8rem; }
+  margin-top: 14px; font-size: 1.05rem; font-weight: 400; color: var(--muted); letter-spacing: .1em;
 }
 .entrygate-emphasis {
-  font-weight: 800; font-size: 1.4rem; line-height: 1.85; color: var(--ng);
-  background: var(--ng-bg); border: 1px solid #f3c2c2; border-radius: 10px; padding: 16px 20px;
+  font-weight: 800; font-size: 1.7rem; line-height: 1.8; color: var(--ng);
+  background: var(--ng-bg); border: 1px solid #f3c2c2; border-radius: 10px; padding: 20px 24px;
+}
+/* 狭い画面向けの縮小。※必ず上の通常定義より後ろに置くこと
+   (同じ詳細度なので、前に置くと通常定義に上書きされて効かなくなる) */
+@media (max-width: 480px) {
+  .entrygate-logo { max-width: 300px; }
+  .entrygate-sitesub { font-size: .95rem; }
+  .entrygate-text { font-size: 1.25rem; line-height: 1.9; }
+  .entrygate-emphasis { font-size: 1.35rem; padding: 16px 18px; }
+  .entrygate-stage { padding: 24px 20px 100px; gap: 22px; }
 }
 .entrygate-btn {
   position: fixed; right: 28px; bottom: 28px; z-index: 1001;
