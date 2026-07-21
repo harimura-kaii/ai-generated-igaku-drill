@@ -109,34 +109,38 @@
       stage.appendChild(dots);
 
       if (p.kind === "title") {
-        // タイトルページ: ロゴ(シンボル+ワードマーク)を大きく出し、下に副題(デモ版)を添える。
+        // タイトルページ: ロゴ(シンボル+ワードマーク)＋右上に「デモ版」の赤いフキダシ。
         // SVGはindex.htmlのヘッダーロゴと同じ意匠(青タイル+チェック+土台バー / 助詞「の」を小さく半透明)。
+        // viewBoxは文字が切れないよう十分な幅を取る(ヘッダー版の250だと「ル」が欠ける)。
         var logo = document.createElement("div");
         logo.className = "entrygate-logo";
         logo.setAttribute("role", "img");
-        logo.setAttribute("aria-label", p.body);
+        logo.setAttribute("aria-label", p.body + (p.sub ? "（" + p.sub + "）" : ""));
         logo.innerHTML =
-          '<svg viewBox="0 0 250 46" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
-            '<g transform="translate(0 3) scale(1)">' +
+          '<svg viewBox="0 0 340 58" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+            '<g transform="translate(0 12)">' +
               '<rect x="1.5" y="1.5" width="37" height="37" rx="11" fill="#2563eb"/>' +
               '<path d="M12 18.5 L18 24.5 L30 12" fill="none" stroke="#fff" stroke-width="4.2" ' +
                 'stroke-linecap="round" stroke-linejoin="round"/>' +
               '<rect x="10" y="29" width="20" height="3" rx="1.5" fill="#fff" opacity="0.92"/>' +
             '</g>' +
-            '<text x="50" y="23" font-family="\'Hiragino Kaku Gothic ProN\',\'Yu Gothic\',\'YuGothic\',' +
+            '<text x="50" y="32" font-family="\'Hiragino Kaku Gothic ProN\',\'Yu Gothic\',\'YuGothic\',' +
               '\'Meiryo\',\'Noto Sans JP\',sans-serif" font-size="26" font-weight="700" ' +
               'letter-spacing="0.5" fill="currentColor" dominant-baseline="central">' +
               '<tspan>医学</tspan><tspan font-size="17" fill-opacity="0.45">の</tspan>' +
               '<tspan font-size="26">基礎問ドリル</tspan>' +
             '</text>' +
+            // 右上の吹き出し(ワードマーク右端=280に被らない位置。尾が左下のロゴ側を指す)
+            '<g transform="translate(286 0)">' +
+              '<rect x="0" y="0" width="46" height="20" rx="10" fill="#d93025"/>' +
+              '<path d="M8 19 L6 26 L15 19 Z" fill="#d93025"/>' +
+              '<text x="23" y="10.5" font-family="\'Hiragino Kaku Gothic ProN\',\'Yu Gothic\',' +
+                '\'YuGothic\',\'Meiryo\',\'Noto Sans JP\',sans-serif" font-size="11.5" ' +
+                'font-weight="700" fill="#fff" text-anchor="middle" dominant-baseline="central">' +
+                'デモ版</text>' +
+            '</g>' +
           '</svg>';
         stage.appendChild(logo);
-        if (p.sub) {
-          var s = document.createElement("div");
-          s.className = "entrygate-sitesub";
-          s.textContent = p.sub;
-          stage.appendChild(s);
-        }
       } else {
         var b = document.createElement("p");
         b.className = "entrygate-text" + (p.emphasize ? " entrygate-emphasis" : "");

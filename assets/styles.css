@@ -308,14 +308,11 @@ body.entrygate-lock { overflow: hidden; }
   margin: 0; font-size: 1.55rem; line-height: 1.95; color: var(--text); white-space: pre-wrap;
   font-weight: 400;
 }
-/* タイトルページ(入場ゲート1枚目): ロゴを大きく、副題を下に添える */
+/* タイトルページ(入場ゲート1枚目): ロゴ＋右上の「デモ版」フキダシ(SVG内に内包) */
 .entrygate-logo {
-  width: 100%; max-width: 460px; color: var(--text);
+  width: 100%; max-width: 580px; color: var(--text);
 }
 .entrygate-logo svg { width: 100%; height: auto; display: block; }
-.entrygate-sitesub {
-  margin-top: 14px; font-size: 1.05rem; font-weight: 400; color: var(--muted); letter-spacing: .1em;
-}
 .entrygate-emphasis {
   font-weight: 800; font-size: 1.7rem; line-height: 1.8; color: var(--ng);
   background: var(--ng-bg); border: 1px solid #f3c2c2; border-radius: 10px; padding: 20px 24px;
@@ -323,8 +320,7 @@ body.entrygate-lock { overflow: hidden; }
 /* 狭い画面向けの縮小。※必ず上の通常定義より後ろに置くこと
    (同じ詳細度なので、前に置くと通常定義に上書きされて効かなくなる) */
 @media (max-width: 480px) {
-  .entrygate-logo { max-width: 300px; }
-  .entrygate-sitesub { font-size: .95rem; }
+  .entrygate-logo { max-width: 320px; }
   .entrygate-text { font-size: 1.25rem; line-height: 1.9; }
   .entrygate-emphasis { font-size: 1.35rem; padding: 16px 18px; }
   .entrygate-stage { padding: 24px 20px 100px; gap: 22px; }
