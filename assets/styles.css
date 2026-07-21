@@ -69,6 +69,13 @@ button { font-family: inherit; }
 .mini:hover { background: #eef2f7; }
 .mini.danger { color: var(--ng); border-color: #f3c2c2; }
 .mini:disabled { opacity: .5; cursor: not-allowed; }
+/* .primary と .mini を併用した小さめの主ボタン。
+   .mini が後に定義されているため、そのままだと背景だけ .mini の白系に上書きされ、
+   文字色は .primary の白が残って「白地に白文字」になる(実際に発生した不具合)。
+   併用時は青地・白文字を明示して復元する。 */
+.primary.mini { background: var(--primary); color: #fff; border: 1px solid transparent; font-weight: 700; }
+.primary.mini:hover { background: var(--primary-d); }
+.primary.mini:disabled { background: #9db4e8; color: #fff; opacity: 1; }
 
 /* 系統一覧 */
 .syslist { display: grid; gap: 12px; margin-top: 14px; }
