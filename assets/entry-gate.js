@@ -20,7 +20,15 @@
   var GAP_MS = 220; // フェードアウト後、次ページのフェードインまでの暗転の間
 
   // title は内部管理用のラベル(画面には出さない。コード上の目印としてのみ使う)。
+  // kind:"title" のページだけは例外で、body をサイトタイトルとして大きく表示する。
   var PAGES = [
+    {
+      title: "タイトル表示",
+      kind: "title",
+      body: "医学の基礎問ドリル",
+      sub: "デモ版",
+      cta: "確認した"
+    },
     {
       title: "これは何か",
       body: "このサイトは、個人が学習のために作った非公式のデモ版です。教育機関・医療機関とは一切関係ありません。",
@@ -100,10 +108,24 @@
       });
       stage.appendChild(dots);
 
-      var b = document.createElement("p");
-      b.className = "entrygate-text" + (p.emphasize ? " entrygate-emphasis" : "");
-      b.textContent = p.body;
-      stage.appendChild(b);
+      if (p.kind === "title") {
+        // タイトルページ: サイト名を大きく、その下に小さく副題(デモ版)を添える。
+        var t = document.createElement("div");
+        t.className = "entrygate-sitetitle";
+        t.textContent = p.body;
+        stage.appendChild(t);
+        if (p.sub) {
+          var s = document.createElement("div");
+          s.className = "entrygate-sitesub";
+          s.textContent = p.sub;
+          stage.appendChild(s);
+        }
+      } else {
+        var b = document.createElement("p");
+        b.className = "entrygate-text" + (p.emphasize ? " entrygate-emphasis" : "");
+        b.textContent = p.body;
+        stage.appendChild(b);
+      }
 
       btn.textContent = p.cta;
       btn.disabled = false;

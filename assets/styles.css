@@ -307,6 +307,17 @@ body.entrygate-lock { overflow: hidden; }
   margin: 0; font-size: 1.28rem; line-height: 2; color: var(--text); white-space: pre-wrap;
   font-weight: 400;
 }
+/* タイトルページ(入場ゲート1枚目): サイト名を大きく、副題は小さく添える */
+.entrygate-sitetitle {
+  font-size: 2.4rem; font-weight: 800; color: var(--text); letter-spacing: .02em;
+  line-height: 1.35;
+}
+.entrygate-sitesub {
+  margin-top: 10px; font-size: 1rem; font-weight: 400; color: var(--muted); letter-spacing: .08em;
+}
+@media (max-width: 480px) {
+  .entrygate-sitetitle { font-size: 1.8rem; }
+}
 .entrygate-emphasis {
   font-weight: 800; font-size: 1.4rem; line-height: 1.85; color: var(--ng);
   background: var(--ng-bg); border: 1px solid #f3c2c2; border-radius: 10px; padding: 16px 20px;
