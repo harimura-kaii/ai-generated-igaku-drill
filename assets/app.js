@@ -108,9 +108,24 @@
     if (b) b.disabled = state.hidx <= 0;
     if (f) f.disabled = state.hidx >= state.history.length - 1;
   }
+  // 下部固定バーの高さは文言の折り返しで変わる(スマホでは「該当n問」「設定/開始」
+  // 「条件に合う問題がありません…」が2〜3段になり、実測で85px〜157pxまで振れる)。
+  // CSSの固定値では足りずに最下部の行がバーの下に隠れるため、実測値を下余白へ反映する。
+  var fixedBarEl = null;
+  function syncFixedBarSpace() {
+    if (!fixedBarEl || !fixedBarEl.parentNode) return;
+    document.body.style.paddingBottom = (fixedBarEl.offsetHeight + 12) + "px";
+  }
+  function clearFixedBarSpace() {
+    fixedBarEl = null;
+    document.body.style.paddingBottom = "";
+  }
+  window.addEventListener("resize", syncFixedBarSpace); // 画面回転で段数が変わる
+
   function renderCurrent() {
     clearTimer();
     document.body.classList.remove("has-fixedbar");
+    clearFixedBarSpace();
     updateHistButtons();
     var e = state.history[state.hidx] || { view: "subjects" };
     if (e.view === "subjects") renderSubjects();
@@ -398,6 +413,7 @@
     bar.appendChild(right);
     app.appendChild(bar);
     var hint = el("div", "muted small barhint2"); bar.appendChild(hint);
+    fixedBarEl = bar;
 
     var settingsHost = el("div", "settings-host"); app.appendChild(settingsHost);
 
@@ -429,6 +445,7 @@
         hint.textContent = "";
       }
       startBtn.disabled = willAsk === 0;
+      syncFixedBarSpace(); // 注意文の有無でバーの高さが変わるため、都度測り直す
     }
     startBtn.onclick = function () {
       var setup = state.setup, pool = buildPool();

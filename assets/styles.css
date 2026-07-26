@@ -360,7 +360,94 @@ body.entrygate-lock { overflow: hidden; }
 }
 
 @media (max-width: 640px) {
-  .statrow { grid-template-columns: 110px 1fr 96px; gap: 8px; }
   .stleaf { font-size: .8rem; }
   .card { padding: 16px; }
+}
+
+/* ==========================================================================
+   スマホ幅の表示調整(2026-07-26)
+
+   ※このブロックは必ずファイル末尾に置くこと。同じ詳細度のメディアクエリを
+     通常定義より前に書くと、後ろの通常定義に上書きされて効かなくなる
+     (実際に2回起こした不具合。上の .entrygate-* のコメントも参照)
+
+   直した根本原因は2つ。どちらも「flexアイテムが縮む/縮まない」の取り違え:
+
+   (1) ヘッダー: .linkbtn が縮んで「科目選択」が縦書き状になり、収まらない分だけ
+       右へはみ出していた。**横にはみ出すとレイアウト幅そのものが広がるため、
+       position:fixed の要素(入場ゲート・下部の固定バー)も画面幅を超えて伸び、
+       「この範囲で開始」ボタンが画面外に出ていた。** 375px幅の実測でバー幅546px。
+   (2) 範囲選択ツリー: 右側の .tmeta / .rowactions が flex:0 0 auto で縮まないため、
+       分類名(.tlabel)が幅0〜35pxまで潰れ、ellipsisで消えて読めなかった。
+       行自体も右へはみ出し、(1)と同じ横スクロールを生んでいた。
+
+   方針: 要素を「縮ませない」よう固定し、入り切らない分は折り返して2段に落とす。
+   幅が足りる行は1段のままなので、PC表示は変わらない。
+   ========================================================================== */
+
+/* --- ヘッダー: 各アイテムを縮ませない(縦書き化・はみ出しの防止) --- */
+.navhist { flex: 0 0 auto; }
+.brand { flex: 0 1 auto; min-width: 0; overflow: hidden; }
+.linkbtn { flex: 0 0 auto; white-space: nowrap; }
+
+@media (max-width: 520px) {
+  .topbar .wrap { gap: 6px; padding: 0 10px; }
+  /* ロゴはシンボル(青タイル)だけ見せる。ワードマークはSVGの右側にあるので、
+     幅を絞って隠す(SVG全体を縮小するとシンボルまで小さくなってしまうため) */
+  .brand { flex: 0 0 36px; width: 36px; }
+  .linkbtn { padding: 8px 6px; font-size: .9rem; }
+  .histbtn { width: 34px; height: 34px; }  /* 指で押せる大きさに */
+}
+
+/* --- 範囲選択ツリー: 分類名を1段目に確保し、メタ情報と操作は2段目へ折り返す --- */
+@media (max-width: 640px) {
+  .trow { flex-wrap: wrap; row-gap: 4px; padding-top: 8px; padding-bottom: 8px; }
+  /* 潰さずに折り返す(ellipsisで消すのをやめる) */
+  .trow > .tlabel {
+    flex: 1 1 auto; min-width: 0;
+    white-space: normal; overflow: visible; text-overflow: clip;
+    overflow-wrap: break-word;
+  }
+  /* 操作ボタンは分類名と同じ段の右端へ、メタ情報(問題数・進捗・選択状況)を次の段へ。
+     この順番にしないと「メタ→操作」で2回折り返して1行が3段になる */
+  .trow > .rowactions { order: 2; margin-left: auto; }
+  .trow > .tmeta { order: 3; flex: 0 1 auto; flex-wrap: wrap; row-gap: 2px; }
+  /* 解答率バーは「解答n/N・正答x%」の文字と情報が重複するので、幅を分類名に回す */
+  .progbar { display: none; }
+  /* 指で押す前提のサイズへ */
+  .trow input[type="checkbox"] { width: 20px; height: 20px; }
+  .chev { flex: 0 0 26px; width: 26px; height: 26px; font-size: .95rem; }
+  /* 階層が深い行の横幅を分類名に回す(ぶら下がりガイド線の字下げを浅くする) */
+  .tbody { margin-left: 8px; }
+}
+
+/* --- 下部の固定バー: 情報とボタンを段組みにし、開始ボタンを大きく --- */
+@media (max-width: 640px) {
+  .fixedbar { padding: 10px 16px; gap: 8px; }
+  .fixedbar > .row { flex: 1 1 100%; }        /* ボタン行は必ず2段目 */
+  .fixedbar > .row > .primary.big { flex: 1 1 auto; }  /* 開始ボタンを横いっぱいに */
+  .barinfo { font-size: .95rem; }
+  .barinfo b { font-size: 1.15rem; }
+  /* バーは2〜3段になるので、隠れないよう本文側の下余白を増やす(実測 最大約125px) */
+  body.has-fixedbar { padding-bottom: 132px; }
+}
+
+/* --- 苦手分野の一覧: 分類名を1行占有させ、バーは下段へ --- */
+@media (max-width: 560px) {
+  .statrow {
+    grid-template-columns: 1fr auto;
+    grid-template-areas: "name pct" "bar bar";
+    gap: 4px 10px;
+  }
+  .stleaf { grid-area: name; }
+  .stpct { grid-area: pct; }
+  .stbar { grid-area: bar; }
+}
+@media (min-width: 561px) and (max-width: 640px) {
+  .statrow { grid-template-columns: 110px 1fr 96px; gap: 8px; }
+}
+
+/* --- 設定パネル(歯車): 狭い画面では左右の余白を詰める --- */
+@media (max-width: 480px) {
+  .settings-panel { padding: 18px 16px 22px; }
 }
