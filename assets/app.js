@@ -980,17 +980,19 @@
           chips.appendChild(el("span", "pill pill-weak", leaf + " ×" + byLeaf[leaf]));
         });
         card.appendChild(chips);
-      } else if (sc.answered > 0 && sc.unanswered === 0) card.appendChild(el("p", "muted", "全問正解です。"));
+      } else if (sc.answered > 0) card.appendChild(el("p", "muted", sc.unanswered ? "解答した " + sc.answered + " 問はすべて正解です。" : "全問正解です。"));
     } else card.appendChild(el("p", "muted", "この条件の問題を解き終えました。"));
     doneButtons(card);
     app.appendChild(card);
   }
 
   function scoreBlock(card, sc) {
-    var pct = sc.total ? Math.round((sc.correct / sc.total) * 100) : 0;
+    // 正答率の分母は「解いた数」。出題予定数(total)を分母にすると、
+    // 20問中8問だけ解いて5問正解 → 25% のように不当に低く出てしまう。
+    var pct = sc.answered ? Math.round((sc.correct / sc.answered) * 100) : 0;
     var sum = el("div", "resultsum"); var big = el("div", "resultbig");
-    big.appendChild(el("span", "resultpct " + (pct < 50 ? "low" : pct < 80 ? "mid" : "high"), pct + "%"));
-    big.appendChild(el("span", "resultfrac", sc.correct + " / " + sc.total + " 問正解"));
+    big.appendChild(el("span", "resultpct " + (!sc.answered ? "" : pct < 50 ? "low" : pct < 80 ? "mid" : "high"), sc.answered ? pct + "%" : "—"));
+    big.appendChild(el("span", "resultfrac", sc.correct + " / " + sc.answered + " 問正解"));
     sum.appendChild(big);
     sum.appendChild(el("div", "resultanswered", "回答 " + sc.answered + " / " + sc.total + " 問" + (sc.unanswered ? "（未回答 " + sc.unanswered + " 問）" : "")));
     card.appendChild(sum);
