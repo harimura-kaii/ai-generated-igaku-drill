@@ -1,0 +1,12 @@
+{
+  "source_triangles": 173578,
+  "source_vertices": 86791,
+  "dimensions_m": [
+    0.091837,
+    0.068655,
+    0.465
+  ],
+  "uv_layers": 1,
+  "material": "M_Excavated_Patina_LOD0 / embedded 2K Base Color",
+  "license": "CC BY 4.0"
+}

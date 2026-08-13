@@ -111,8 +111,8 @@ AIで量産した問題バンクは、どれだけ確認しても一定の割合
 
 医学ドリルとは独立した3Dビューアを2種類公開しています。どちらもPC・スマホからアクセスでき、1本指ドラッグで回転、2本指でズーム・パンができます。
 
-- 原本・高詳細版（LOD0 / 2K）: <https://harimura-kaii.github.io/ai-generated-igaku-drill/bronze-femur/original/>
-- 高詳細版（互換入口）: <https://harimura-kaii.github.io/ai-generated-igaku-drill/bronze-femur/>
+- 原形状・最高精細版（元STL / 173,578三角形）: <https://harimura-kaii.github.io/ai-generated-igaku-drill/bronze-femur/original/>
+- 公開用LOD0版（50,336三角形）: <https://harimura-kaii.github.io/ai-generated-igaku-drill/bronze-femur/>
 - 軽量版（LOD1）: <https://harimura-kaii.github.io/ai-generated-igaku-drill/bronze-femur/light/>
 
 ---
