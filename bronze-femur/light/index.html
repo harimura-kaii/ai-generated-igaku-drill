@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>腐食青銅大腿骨 — 360°インタラクティブビューア（高詳細版）</title>
+<title>腐食青銅大腿骨 — 360°インタラクティブビューア（軽量版）</title>
 <style>
   :root { color-scheme: dark; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -99,21 +99,21 @@
 <script type="importmap">
 {
   "imports": {
-    "three": "./vendor/three.module.js",
-    "three/addons/": "./vendor/"
+    "three": "../vendor/three.module.js",
+    "three/addons/": "../vendor/"
   }
 }
 </script>
 
 <script type="module">
 import * as THREE from 'three';
-import { OrbitControls } from './vendor/OrbitControls.js';
-import { GLTFLoader } from './vendor/GLTFLoader.js';
-import { RoomEnvironment } from './vendor/RoomEnvironment.js';
+import { OrbitControls } from '../vendor/OrbitControls.js';
+import { GLTFLoader } from '../vendor/GLTFLoader.js';
+import { RoomEnvironment } from '../vendor/RoomEnvironment.js';
 
-// This page is intentionally fixed to the original high-detail LOD0 model.
-// Use /bronze-femur/light/ when a smaller download is preferred.
-const MODEL_URL = './ancient_bronze_femur_LOD0.glb';
+// This page is intentionally fixed to the lightweight LOD1 model.
+// The high-detail LOD0 version is available at /bronze-femur/.
+const MODEL_URL = '../ancient_bronze_femur_LOD1.glb';
 const app = document.getElementById('app');
 const loaderEl = document.getElementById('loader');
 const barEl = document.querySelector('#bar > div');

@@ -109,9 +109,10 @@ AIで量産した問題バンクは、どれだけ確認しても一定の割合
 
 ## 青銅大腿骨 360°ビューア
 
-医学ドリルとは独立した3Dビューアを公開しています。スマホでは1本指ドラッグで回転、2本指でズーム・パンができます。
+医学ドリルとは独立した3Dビューアを2種類公開しています。どちらもPC・スマホからアクセスでき、1本指ドラッグで回転、2本指でズーム・パンができます。
 
-<https://harimura-kaii.github.io/ai-generated-igaku-drill/bronze-femur/>
+- 高詳細版（LOD0）: <https://harimura-kaii.github.io/ai-generated-igaku-drill/bronze-femur/>
+- 軽量版（LOD1）: <https://harimura-kaii.github.io/ai-generated-igaku-drill/bronze-femur/light/>
 
 ---
 
