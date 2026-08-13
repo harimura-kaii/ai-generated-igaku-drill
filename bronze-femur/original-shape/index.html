@@ -209,10 +209,22 @@ gltfLoader.load(
     // target=(0,0,0.015)）をglTFのY-up座標へ変換した初期視点。
     // ここを固定することで、原本画像と同じ正面寄りの角度・占有率になる。
     const radius = size.length() * 0.5;
-    const dist = 1.39;
+    let dist = 1.39;
     camera.fov = 21.2393;
     controls.target.set(0, 0.015, 0);
     camera.position.set(0.70, 0.08, 1.20);
+
+    // スマホ縦長（aspect<0.8）では、元Blendと同じ視線方向を保ったまま
+    // 距離と注視点だけを再計算し、骨の全長が画面高さの約60%
+    // （上端約22%〜下端約82%）に収まるようにする。デスクトップ（aspect>=0.8）は無変更。
+    const aspect = window.innerWidth / window.innerHeight;
+    if (aspect < 0.8) {
+      const dir = camera.position.clone().normalize();
+      dist = (size.y / 0.60) / (2 * Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2));
+      controls.target.set(0, -size.y / 30, 0);
+      camera.position.copy(dir.multiplyScalar(dist));
+    }
+
     camera.near = radius / 100;
     camera.far = radius * 100;
     camera.updateProjectionMatrix();
