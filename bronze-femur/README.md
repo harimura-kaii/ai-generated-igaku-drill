@@ -13,7 +13,8 @@ GitHub Pages:
 ## 構成
 
 - `index.html` — Three.js製ビューア
-- `ancient_bronze_femur_LOD0.glb` — 埋め込みPNGテクスチャ付き表示モデル
+- `ancient_bronze_femur_LOD0.glb` — PC向け・高詳細版（埋め込みPNGテクスチャ付き）
+- `ancient_bronze_femur_LOD1.glb` — スマホ向け・軽量版（自動選択）
 - `vendor/` — Three.js、OrbitControls、GLTFLoader、RoomEnvironment（ローカル同梱）
 
 元の青銅GLBをそのままコピーして使用しています。VRChat用データやUnity依存は含みません。

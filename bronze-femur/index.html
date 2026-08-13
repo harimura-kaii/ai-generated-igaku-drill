@@ -111,7 +111,13 @@ import { OrbitControls } from './vendor/OrbitControls.js';
 import { GLTFLoader } from './vendor/GLTFLoader.js';
 import { RoomEnvironment } from './vendor/RoomEnvironment.js';
 
-const MODEL_URL = './ancient_bronze_femur_LOD0.glb';
+// Mobile networks and memory are more constrained, so use the smaller LOD1
+// on phones/tablets. Desktop keeps the full-detail LOD0 appearance.
+const isMobile = window.matchMedia('(max-width: 700px)').matches ||
+  (navigator.connection && (navigator.connection.saveData || /2g|3g/.test(navigator.connection.effectiveType || '')));
+const MODEL_URL = isMobile
+  ? './ancient_bronze_femur_LOD1.glb'
+  : './ancient_bronze_femur_LOD0.glb';
 const app = document.getElementById('app');
 const loaderEl = document.getElementById('loader');
 const barEl = document.querySelector('#bar > div');
