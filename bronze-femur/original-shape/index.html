@@ -125,12 +125,12 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.35;
+renderer.toneMappingExposure = 1.15;
 app.appendChild(renderer.domElement);
 
 // ---- シーン（暗色背景 + 微グラデ）----
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x030303);
+scene.background = new THREE.Color(0x000000);
 
 // 環境光（IBL）で金属の質感を出す
 const pmrem = new THREE.PMREMGenerator(renderer);
@@ -140,16 +140,16 @@ scene.environment = pmrem.fromScene(new RoomEnvironment(renderer), 0.04).texture
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.001, 100);
 
 // ---- ライト（見やすい三点照明）----
-const key = new THREE.DirectionalLight(0xffd9ae, 6.2);
-key.position.set(-0.36, -0.42, 0.48);
+const key = new THREE.DirectionalLight(0xffd9ae, 4.8);
+key.position.set(-0.36, 0.48, 0.42);
 scene.add(key);
-const fill = new THREE.DirectionalLight(0xa3c7ff, 2.8);
-fill.position.set(0.44, -0.18, 0.2);
+const fill = new THREE.DirectionalLight(0xa3c7ff, 2.0);
+fill.position.set(0.44, 0.20, 0.18);
 scene.add(fill);
-const rim = new THREE.DirectionalLight(0xffa56d, 4.2);
-rim.position.set(0.02, 0.38, 0.42);
+const rim = new THREE.DirectionalLight(0xffa56d, 2.8);
+rim.position.set(0.02, 0.42, -0.38);
 scene.add(rim);
-scene.add(new THREE.AmbientLight(0x6a776f, 1.0));
+scene.add(new THREE.AmbientLight(0x637064, 0.85));
 
 // ---- コントロール ----
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -179,6 +179,9 @@ gltfLoader.load(
         const mats = Array.isArray(o.material) ? o.material : [o.material];
         for (const m of mats) {
           if (m.map) m.map.colorSpace = THREE.SRGBColorSpace;
+          // Match the brighter, low-contrast appearance of the original
+          // Blender preview without altering the embedded source texture.
+          m.color.setRGB(1.25, 1.25, 1.25);
           m.needsUpdate = true;
         }
         o.castShadow = false; o.receiveShadow = false;
@@ -195,20 +198,21 @@ gltfLoader.load(
     // 元Blendの確認レンダーに合わせ、原本を明るく見せる展示台を置く。
     const floor = new THREE.Mesh(
       new THREE.PlaneGeometry(2.0, 2.0),
-      new THREE.MeshStandardMaterial({ color: 0xd8d2cc, roughness: 0.96, metalness: 0.0 })
+      new THREE.MeshStandardMaterial({ color: 0xaaa49e, roughness: 0.98, metalness: 0.0 })
     );
     floor.rotation.x = -Math.PI / 2;
     floor.position.y = -size.y / 2 - 0.004;
     floor.receiveShadow = false;
     scene.add(floor);
 
-    // カメラを対象に合わせてフレーミング
+    // 元Blendの確認レンダー（camera=(0.70,-1.20,0.08), lens=64,
+    // target=(0,0,0.015)）をglTFのY-up座標へ変換した初期視点。
+    // ここを固定することで、原本画像と同じ正面寄りの角度・占有率になる。
     const radius = size.length() * 0.5;
-    const fov = camera.fov * Math.PI / 180;
-    const dist = radius / Math.sin(fov / 2) * 1.15;
-
-    controls.target.set(0, 0, 0);
-    camera.position.set(dist * 0.55, dist * 0.35, dist * 0.85);
+    const dist = 1.39;
+    camera.fov = 21.2393;
+    controls.target.set(0, 0.015, 0);
+    camera.position.set(0.70, 0.08, 1.20);
     camera.near = radius / 100;
     camera.far = radius * 100;
     camera.updateProjectionMatrix();
