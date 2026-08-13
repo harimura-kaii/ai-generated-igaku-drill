@@ -125,12 +125,12 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.05;
+renderer.toneMappingExposure = 1.35;
 app.appendChild(renderer.domElement);
 
 // ---- シーン（暗色背景 + 微グラデ）----
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x0a0d12);
+scene.background = new THREE.Color(0x030303);
 
 // 環境光（IBL）で金属の質感を出す
 const pmrem = new THREE.PMREMGenerator(renderer);
@@ -140,16 +140,16 @@ scene.environment = pmrem.fromScene(new RoomEnvironment(renderer), 0.04).texture
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.001, 100);
 
 // ---- ライト（見やすい三点照明）----
-const key = new THREE.DirectionalLight(0xfff4e0, 2.4);
-key.position.set(1.2, 1.6, 1.0);
+const key = new THREE.DirectionalLight(0xffd9ae, 6.2);
+key.position.set(-0.36, -0.42, 0.48);
 scene.add(key);
-const fill = new THREE.DirectionalLight(0xbfd4ff, 1.0);
-fill.position.set(-1.4, 0.4, 0.6);
+const fill = new THREE.DirectionalLight(0xa3c7ff, 2.8);
+fill.position.set(0.44, -0.18, 0.2);
 scene.add(fill);
-const rim = new THREE.DirectionalLight(0xffffff, 1.6);
-rim.position.set(-0.6, 0.8, -1.4);
+const rim = new THREE.DirectionalLight(0xffa56d, 4.2);
+rim.position.set(0.02, 0.38, 0.42);
 scene.add(rim);
-scene.add(new THREE.AmbientLight(0x404a55, 0.6));
+scene.add(new THREE.AmbientLight(0x6a776f, 1.0));
 
 // ---- コントロール ----
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -191,6 +191,16 @@ gltfLoader.load(
     const center = box.getCenter(new THREE.Vector3());
     model.position.sub(center); // 原点中心に
     scene.add(model);
+
+    // 元Blendの確認レンダーに合わせ、原本を明るく見せる展示台を置く。
+    const floor = new THREE.Mesh(
+      new THREE.PlaneGeometry(2.0, 2.0),
+      new THREE.MeshStandardMaterial({ color: 0xd8d2cc, roughness: 0.96, metalness: 0.0 })
+    );
+    floor.rotation.x = -Math.PI / 2;
+    floor.position.y = -size.y / 2 - 0.004;
+    floor.receiveShadow = false;
+    scene.add(floor);
 
     // カメラを対象に合わせてフレーミング
     const radius = size.length() * 0.5;
