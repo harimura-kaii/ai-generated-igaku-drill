@@ -225,10 +225,10 @@
       (subj.units || []).forEach(function (u) { total += (u._total || 0); if (u._total > 0) ready++; });
       var c = el("button", "sysitem");
       c.appendChild(el("div", "sysname", subj.name));
-      c.appendChild(el("div", "sysdesc", (subj.units || []).length + "単元中 " + ready + "単元 収録済み(残りは順次追加)"));
+      c.appendChild(el("div", "sysdesc", (subj.units || []).length + "単元中 " + ready + "単元 収録済み" + (ready < (subj.units || []).length ? "(残りは順次追加)" : "")));
       var meta = el("div", "sysmeta");
       meta.appendChild(el("span", "pill", total + "問"));
-      meta.appendChild(el("span", "pill pill-new", "5択・難易度4段階"));
+      meta.appendChild(el("span", "pill pill-new", "5択"));
       c.appendChild(meta);
       c.onclick = function () { initSubject(subj); navTo({ view: "range" }); };
       list.appendChild(c);
@@ -421,7 +421,7 @@
       var setup = state.setup, res = getResults(subject.id);
       return state.flatQuestions.filter(function (q) {
         if (!setup.leaves[q._leafId]) return false;
-        if (!setup.diffs[q.diff]) return false;
+        if (q.diff && !setup.diffs[q.diff]) return false; // 難易度を持たない問題(2026-10〜)は絞り込まない
         var status = res[q.id] ? res[q.id] : "unanswered";
         return !!setup.st[status];
       });
@@ -451,16 +451,28 @@
       var setup = state.setup, pool = buildPool();
       if (setup.shuffle) pool = shuffle(pool.slice());
       if (setup.limit !== 0) pool = pool.slice(0, setup.limit);
-      state.pool = pool;
-      state.session = {
-        total: pool.length, answers: new Array(pool.length),
-        qDeadlines: new Array(pool.length),
-        reveal: setup.reveal, showMeta: setup.showMeta,
-        timeMode: setup.timeMode, perQSec: setup.perQSec,
-        deadline: setup.timeMode === "perSet" ? Date.now() + setup.perSetMin * 60000 : 0,
-        hideWhy: setup.hideWhy, active: true,
-      };
-      navTo({ view: "quiz", idx: 0 });
+      function begin() {
+        state.pool = pool;
+        state.session = {
+          total: pool.length, answers: new Array(pool.length),
+          qDeadlines: new Array(pool.length),
+          reveal: setup.reveal, showMeta: setup.showMeta,
+          timeMode: setup.timeMode, perQSec: setup.perQSec,
+          deadline: setup.timeMode === "perSet" ? Date.now() + setup.perSetMin * 60000 : 0,
+          hideWhy: setup.hideWhy, active: true,
+        };
+        navTo({ view: "quiz", idx: 0 });
+      }
+      // 問題の本文は、出題する問題のぶんだけ、ここで初めて読み込む(初回表示を軽くするため)
+      var label = startBtn.textContent;
+      startBtn.disabled = true; startBtn.textContent = "問題を読み込み中…";
+      window.QuizBank.ensureLoaded(pool, function () {
+        startBtn.textContent = label; startBtn.disabled = false;
+        begin();
+      }, function () {
+        startBtn.textContent = label; startBtn.disabled = false;
+        alert("問題を読み込めませんでした。通信状況を確かめて、もう一度お試しください。");
+      });
     };
 
     function renderSettings() {
@@ -476,14 +488,17 @@
       ph.appendChild(close); panel.appendChild(ph);
       var setup = state.setup;
 
-      panel.appendChild(el("h3", null, "難易度"));
-      var diffWrap = el("div", "row gap wrap");
-      DIFFS.forEach(function (d) {
-        var cb = mkCheck(!!setup.diffs[d]);
-        cb.onchange = function () { setup.diffs[d] = cb.checked; refresh(); };
-        var lab = el("label", "chip"); lab.appendChild(cb); lab.appendChild(el("span", null, d)); diffWrap.appendChild(lab);
-      });
-      panel.appendChild(diffWrap);
+      // 難易度の絞り込みは、難易度を持つ問題があるときだけ出す
+      if (state.flatQuestions.some(function (q) { return !!q.diff; })) {
+        panel.appendChild(el("h3", null, "難易度"));
+        var diffWrap = el("div", "row gap wrap");
+        DIFFS.forEach(function (d) {
+          var cb = mkCheck(!!setup.diffs[d]);
+          cb.onchange = function () { setup.diffs[d] = cb.checked; refresh(); };
+          var lab = el("label", "chip"); lab.appendChild(cb); lab.appendChild(el("span", null, d)); diffWrap.appendChild(lab);
+        });
+        panel.appendChild(diffWrap);
+      }
 
       panel.appendChild(el("h3", null, "回答状況"));
       var stWrap = el("div", "row gap wrap");
@@ -608,7 +623,7 @@
       var info = state.leafInfo[q._leafId];
       if (info && info.unitName) left.appendChild(el("span", "pill pill-unit", info.unitName));
       left.appendChild(el("span", "pill", q.leaf));
-      left.appendChild(el("span", "pill pill-diff diff-" + q.diff, q.diff));
+      if (q.diff) left.appendChild(el("span", "pill pill-diff diff-" + q.diff, q.diff));
     }
     hdr.appendChild(left);
     var right = el("div", "row gap");

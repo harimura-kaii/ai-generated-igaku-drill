@@ -46,6 +46,18 @@ window.QuizBank = (function () {
     registerUnit: function (subjectId, unit) {
       var subj = ensureSubject(subjectId);
       unit.nodes = toNodes(unit);
+      // 遅延読み込み(2026-10〜): unit.qindex = { リーフ名: [[問題番号...], "正解の番号を並べた文字列", 本文ファイルの番号] } と
+      // unit.chunkBase(本文ファイルの置き場)を持つ単元は、最初は番号・リーフ・正解だけの軽い控えを作る。
+      // 本文(設問・選択肢・解説)はリーフごとの小さなファイルに分かれていて、出題を始めるときに
+      // ensureLoaded() が必要なぶんだけ読み込み、fill() が控えに書き足す。
+      if (unit.qindex && !unit.questions) {
+        var stubs = [];
+        Object.keys(unit.qindex).forEach(function (leaf) {
+          var e = unit.qindex[leaf], ids = e[0], ans = e[1], src = unit.chunkBase + e[2] + ".js?v=" + e[3];
+          ids.forEach(function (id, k) { stubs.push({ id: id, leaf: leaf, ans: +ans.charAt(k), _src: src }); });
+        });
+        unit.questions = stubs;
+      }
       var counts = {};
       (unit.questions || []).forEach(function (q) {
         counts[q.leaf] = (counts[q.leaf] || 0) + 1;
@@ -65,6 +77,46 @@ window.QuizBank = (function () {
         .sort(function (a, b) { return a.order - b.order; });
     },
     getSubject: function (id) { return subjects[id]; },
+
+    // ---- 遅延読み込み ----
+    // 本文ファイル(data/q/<単元>-<番号>.js)が呼ぶ。控えのオブジェクトに本文を書き足す(参照は変えない)。
+    fill: function (unitId, questions) {
+      var unit = this.get(unitId);
+      if (!unit) return;
+      var byId = {};
+      unit.questions.forEach(function (q) { byId[q.id] = q; });
+      questions.forEach(function (q) {
+        var t = byId[q.id];
+        if (!t) return;
+        for (var k in q) if (Object.prototype.hasOwnProperty.call(q, k)) t[k] = q[k];
+      });
+    },
+    // 渡した問題のうち、本文が未読み込みのものがあれば、その本文ファイルを読み込む。
+    // 全部そろったら done()、読み込めないファイルがあれば fail()。
+    ensureLoaded: function (questions, done, fail) {
+      var srcs = [], pending = 0, failed = false;
+      questions.forEach(function (q) {
+        if (q.q === undefined && q._src && srcs.indexOf(q._src) < 0) srcs.push(q._src);
+      });
+      function settle() {
+        if (failed || pending > 0) return;
+        if (questions.some(function (q) { return q.q === undefined; })) { failed = true; if (fail) fail(); return; }
+        done();
+      }
+      srcs.forEach(function (src) {
+        pending++;
+        var s = document.createElement("script");
+        s.src = src;
+        s.onload = function () { pending--; settle(); };
+        s.onerror = function () {
+          pending--;
+          if (s.parentNode) s.parentNode.removeChild(s);
+          if (!failed) { failed = true; if (fail) fail(); }
+        };
+        document.head.appendChild(s);
+      });
+      settle();
+    },
 
     // ---- 後方互換(旧API) ----
     all: function () { var s = this.subjects()[0]; return s ? s.units : []; },
