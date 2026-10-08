@@ -181,7 +181,7 @@
       reveal: "each",          // 'each'=1問ずつ / 'end'=最後にまとめて
       timeMode: "none",        // 'none' / 'perQ' / 'perSet'
       perQSec: 60, perSetMin: 10,
-      showMeta: true,          // 出題中に分類・難易度を表示
+      showMeta: true,          // 出題中に分類(難易度があれば難易度も)を表示
     };
   }
   function initCollapsed() {
@@ -556,10 +556,10 @@
       var dispWrap = el("div", "col gap");
       var meta = mkCheck(setup.showMeta);
       meta.onchange = function () { setup.showMeta = meta.checked; };
-      var mLab = el("label", "chip"); mLab.appendChild(meta); mLab.appendChild(el("span", null, "出題中に分類・難易度を表示")); dispWrap.appendChild(mLab);
+      var mLab = el("label", "chip"); mLab.appendChild(meta); mLab.appendChild(el("span", null, state.flatQuestions.some(function (q) { return !!q.diff; }) ? "出題中に分類・難易度を表示" : "出題中に分類を表示")); dispWrap.appendChild(mLab);
       var hw = mkCheck(setup.hideWhy);
       hw.onchange = function () { setup.hideWhy = hw.checked; };
-      var hwLab = el("label", "chip"); hwLab.appendChild(hw); hwLab.appendChild(el("span", null, "選択肢ごとの解説・参考文献を既定で隠す")); dispWrap.appendChild(hwLab);
+      var hwLab = el("label", "chip"); hwLab.appendChild(hw); hwLab.appendChild(el("span", null, "選択肢ごとの解説を既定で隠す")); dispWrap.appendChild(hwLab);
       panel.appendChild(dispWrap);
 
       var done = el("button", "primary", "閉じる");
@@ -731,6 +731,7 @@
     detail.appendChild(exp);
 
     var hasWhy = q.why && q.why.length, hasRef = q.refs && q.refs.length;
+    var moreLabel = "選択肢ごとの解説" + (hasRef ? "・参考文献" : ""); // 典拠を画面に出さない問題では「解説」だけにする
     if (hasWhy || hasRef) {
       var more = el("div", "more " + (state.session && state.session.hideWhy ? "hidden" : ""));
       if (hasWhy) {
@@ -751,10 +752,10 @@
         more.appendChild(rb);
       }
       var toggle = el("button", "linktoggle",
-        (state.session && state.session.hideWhy) ? "選択肢ごとの解説・参考文献を表示" : "選択肢ごとの解説・参考文献を隠す");
+        (state.session && state.session.hideWhy) ? moreLabel + "を表示" : moreLabel + "を隠す");
       toggle.onclick = function () {
         more.classList.toggle("hidden");
-        toggle.textContent = more.classList.contains("hidden") ? "選択肢ごとの解説・参考文献を表示" : "選択肢ごとの解説・参考文献を隠す";
+        toggle.textContent = more.classList.contains("hidden") ? moreLabel + "を表示" : moreLabel + "を隠す";
       };
       detail.appendChild(toggle); detail.appendChild(more);
     }
