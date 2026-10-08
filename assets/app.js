@@ -556,7 +556,7 @@
       var dispWrap = el("div", "col gap");
       var meta = mkCheck(setup.showMeta);
       meta.onchange = function () { setup.showMeta = meta.checked; };
-      var mLab = el("label", "chip"); mLab.appendChild(meta); mLab.appendChild(el("span", null, state.flatQuestions.some(function (q) { return !!q.diff; }) ? "出題中に分類・難易度を表示" : "出題中に分類を表示")); dispWrap.appendChild(mLab);
+      var mLab = el("label", "chip"); mLab.appendChild(meta); mLab.appendChild(el("span", null, state.flatQuestions.some(function (q) { return !!q.diff; }) ? "出題中に単元・分類名・難易度を表示" : "出題中に単元・分類名を表示")); dispWrap.appendChild(mLab);
       var hw = mkCheck(setup.hideWhy);
       hw.onchange = function () { setup.hideWhy = hw.checked; };
       var hwLab = el("label", "chip"); hwLab.appendChild(hw); hwLab.appendChild(el("span", null, "選択肢ごとの解説を既定で隠す")); dispWrap.appendChild(hwLab);
