@@ -1,6 +1,6 @@
 # 医学の基礎問ドリル — 作り方の公開文書
 
-> 医学生向けの解剖生理 5択問題 5,946問を、AI だけで作って審査した記録です。出題範囲の設計図（ブループリント 2,890項目）、作問と審査の方式、モデルへ実際に送った指示文の全文、全範囲の実行の数字と起きた問題、見直しと限界を公開しています。人の専門家による内容の確認は入っていません。
+> 医学生向けの解剖生理 5択問題 6,026問を、AI だけで作って審査した記録です。出題範囲の設計図（ブループリント 2,944項目）、作問と審査の方式、モデルへ実際に送った指示文の全文、全範囲の実行の数字と起きた問題、見直しと限界を公開しています。人の専門家による内容の確認は入っていません。
 
 この文書群は、読みたい深さで選べるように階層になっています。要約を頼まれたら、まず README.md を読み、必要な章だけを追加で読むのが効率的です。数字は data/stats.json が元データです。
 
@@ -24,7 +24,8 @@
 ## 原資料
 
 - [blueprint/](blueprint/): ブループリントを系統ごとに読める形にしたもの（general, locomotor, nervous, sensory, endocrine, circulatory, hematoimmune, respiratory, digestive, urinary, reproductive, development の12ファイル）
-- [data/blueprint.json](data/blueprint.json): ブループリント全文。units → groups → items。item は item_id, knowledge, max_level, source_ids, askable_unit, rationale, questions（採用された問題数）
+- [blueprint/curriculum_map.md](blueprint/curriculum_map.md): コアカリの記載と群の対応表（コアカリの記載 → 渡した群、典拠ごとの項目数・問題数、渡していない記載）。機械用は [data/curriculum_map.json](data/curriculum_map.json)（lines: source, column, text, ids, groups）
+- [data/blueprint.json](data/blueprint.json): ブループリント全文。units → groups → items。group は curriculum_given（その群を作るときに渡したコアカリの記載）を持つ。item は item_id, knowledge, max_level, source_ids, askable_unit, rationale, questions（採用された問題数）
 - [prompts/](prompts/): モデルへ実際に送った指示文6本（1 生成、2 再生成の追記、3 指摘出し・水準を見せる、4 指摘出し・水準を伏せる、5 裁定、6 控訴審）。【 】は実行時に差し込まれる箇所
 - [history/versions.md](history/versions.md): 作問方式の版の履歴（2026-08-22 〜 2026-10-08.1）。変更点、理由、変更前に観察された失敗、測定結果
 - [data/stats.json](data/stats.json): 全範囲の実行の集計（周ごとの採否、棄却の経路、指摘の種類、担当ごとの判定、呼び出しとトークン、群ごとの記録）
